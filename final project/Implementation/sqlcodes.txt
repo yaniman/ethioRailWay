@@ -1,0 +1,3 @@
+
+Reservation table
+CREATE TABLE `babure`.`reservation` ( `r_id` INT NOT NULL AUTO_INCREMENT , `full name` VARCHAR(50) NOT NULL , `email` VARCHAR(50) NOT NULL , `phoneNumber` VARCHAR(50) NOT NULL , `age` INT(3) NOT NULL , `dt_id` INT NOT NULL , `citizenship` VARCHAR(50) NOT NULL , `id_number` VARCHAR(50) NOT NULL , `class` VARCHAR(20) NOT NULL , `reservation_date` DATE NOT NULL , `reserved_by` VARCHAR(30) NOT NULL , `status` VARCHAR(30) NOT NULL , `seat_number` VARCHAR(10) NOT NULL , `ticket_number` VARCHAR(40) NOT NULL , PRIMARY KEY (`r_id`)) ENGINE = InnoDB;
