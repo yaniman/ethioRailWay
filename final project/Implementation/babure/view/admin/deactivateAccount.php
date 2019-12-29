@@ -1,10 +1,13 @@
+<?php
+session_start();
+?>
 <!DOCTYPE >
 <html>
   <head>
     <title>
-      Admin home
+      Deactivate Account
     </title>
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../css/bootstrap/bootstrap.css" type="text/css" />
   </head>
 
   <body>
@@ -13,7 +16,7 @@
     >
       <ul class="navbar-nav ">
         <li class="nav-item">
-          <a class="nav-link" href="#">create account</a>
+          <a class="nav-link" href="createAccount.html">create account</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Manage account</a>
@@ -30,38 +33,14 @@
       </ul>
     </nav>
     <div class="container">
-      <form class="form1" method="POST" action="../model/createaccount.php">
-        <input
-          type="text"
-          placeholder="First Name"
-          class="form-control"
-          name="firstname"
-        />
-        <input
-          type="text"
-          placeholder="Last Name"
-          class="form-control"
-          name="lastname"
-        />
-        <input
-          type="text"
-          placeholder="Email"
-          class="form-control"
-          name="email"
-        />
-        <input
-          type="text"
-          placeholder="Phone Number"
-          class="form-control"
-          name="phone"
-        />
-        <input
-          type="text"
-          placeholder="Privilage"
-          class="form-control"
-          name="priv"
-        />
-        <input type="submit" value="submit" />
+      <form class="form1" method="POST" action="../../model/deactivateAccount.php">
+      <label>id</label>
+        <input type="text" class="form-control" name="id" value=<?php echo $_SESSION['staff_id'] ?>>
+        <label>username</label>
+        <input type="text" class="form-control" value=<?php echo $_SESSION['username'] ?>>
+        <label>fullname</label>
+        <input type="text" class="form-control"value=<?php echo $_SESSION['fullname'] ?>>
+        <input type="submit" value="Deactivate" />
       </form>
     </div>
     <div class="card-footer">

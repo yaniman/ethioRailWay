@@ -19,10 +19,11 @@ class createaccount
        $this->email=$_POST['email'];
        $this->phoneno=$_POST['phone'];
        $this->privilege=$_POST['priv'];
-       $new1=$this->firstname+""+substr($this->lastname,0,3)+""+substr($this->phoneno+""+strlen($this->phoneno)-4+""+strlen($this->phoneno));
+       $new1=$this->firstname.substr($this->lastname,0,3).substr($this->phoneno,4);
+       //$new1=$this->firstname;
        $this->username=$new1;
        $this->password=$new1;
-       $this->fullname=$this->firstname+""+$this->lastname;
+       $this->fullname=$this->firstname." ".$this->lastname;
        $this->status="active";
    }
    public function create()
@@ -33,12 +34,25 @@ class createaccount
        $value=$acc->account($this->fullname,$this->email,$this->phoneno,$this->privilege,$this->username,$this->password,$this->status);
        if($value)
        {
-           // java script page alert 
-         header('location: ../view/adminHome.html');
+           // java script page alert
+           
+          $this->emailsend($this->email);
+         header('location: ../view/admin/adminHome.html');
        }
        else{
-           header('location: ../view/createAccount.html');
+           header('location: ../view/admin/createAccount.html');
        }
+   }
+   public function emailsend($email)
+   {
+     echo "email sender activated";
+     $to=$email;
+     $subject='account creation';
+     $message='<h1>your user is <h1>'.$this->username.'<h1>your password is '.$this->password;
+     $headers="From:yonas bekele <yonasbekele4@gmail.com>\r\n";
+     $headers.="Reply_To:yonasbek4@gmail.com\r\n";
+     $headers.="Content-type:text/html\r\n";
+     mail($to,$subject,$message,$headers);
    }
 }
 $cr=new createaccount;

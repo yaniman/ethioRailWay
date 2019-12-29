@@ -14,8 +14,8 @@ class loginModel
     {
         //$username=$_POST('username');
         //$password=$_POST('password');
-        $this->username="yaniman";
-        $this->password="yaniman";
+        $this->username="0923273069";
+        $this->password="3069";
     }
     public function loginModule()
     {

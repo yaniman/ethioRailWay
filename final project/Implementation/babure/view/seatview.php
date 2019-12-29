@@ -9,6 +9,9 @@
     <body>
         <nav class="navbar navbar-expand-sm bg-light navbar-light justify-content-end">
             <ul class="navbar-nav ">
+            <li class="nav-item">
+          <a class="nav-link" href="#">Manage account</a>
+        </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Reserve Ticket</a>
                 </li>

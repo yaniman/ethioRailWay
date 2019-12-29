@@ -12,7 +12,7 @@ require_once "connection.php";
       public function loginmodules($username,$password)
       {
           $this->setter();
-       $query="select * from user_table where username='$username' and pass='$password'";
+       $query="select * from staff where username='$username' and password='$password'";
        //echo "query is".$query;
        $result=$this->con->conn->query($query);
     
