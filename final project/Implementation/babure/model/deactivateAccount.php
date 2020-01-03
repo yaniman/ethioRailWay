@@ -5,7 +5,7 @@ class deAccount
  public $id;
  public function setter()
  {
-     $this->id=$_POST["id"];
+     $this->id=$_POST["user_id"];
  }
  public function deactivate()
  {

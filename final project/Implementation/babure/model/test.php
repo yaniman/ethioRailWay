@@ -2,5 +2,5 @@
 
 session_start();
 
-echo $_SESSION['dt_id'];
+echo $_SESSION["query"];
 ?>

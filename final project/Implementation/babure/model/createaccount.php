@@ -37,15 +37,15 @@ class createaccount
            // java script page alert
            
           $this->emailsend($this->email);
-         header('location: ../view/admin/adminHome.html');
+         header('location: ../view/admin/manageaccount.php');
        }
        else{
-           header('location: ../view/admin/createAccount.html');
+           header('location: ../view/admin/adminHome.html');
        }
    }
    public function emailsend($email)
    {
-     echo "email sender activated";
+     
      $to=$email;
      $subject='account creation';
      $message='<h1>your user is <h1>'.$this->username.'<h1>your password is '.$this->password;
