@@ -14,11 +14,11 @@ class deAccount
      $result=$deac->deactivator($this->id);
      if($result)
      {
-          header('Location: ../view/admin/adminHome.html'); 
+          echo "deactivation succesfull";
      }
      else
      {
-     header('Location: ../view/admin/searchAccount.html');
+         echo "deactivation failed";
      }
  }
 }

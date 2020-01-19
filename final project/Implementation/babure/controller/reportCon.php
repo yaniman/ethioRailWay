@@ -12,10 +12,10 @@ class reporter
        {
           $this->setter();
           $result=array();
-       $query="SELECT * FROM users_table ut JOIN reservation r WHERE  r.reserver like 'user' and ut.citizenship LIKE 'ethiopian'"; 
+       $query="SELECT * FROM users_table where citizenship LIKE 'ethiopian'"; 
        $value=$this->con->conn->query($query);
        $result[0]=$value->num_rows;
-        $query="SELECT * FROM users_table ut JOIN reservation r WHERE  r.reserver like 'user' and ut.citizenship LIKE 'nonethiopian'";
+        $query="SELECT * FROM users_table where citizenship LIKE 'non-ethiopian'";
        $value=$this->con->conn->query($query);
        $result[1]=$value->num_rows;
        return $result;

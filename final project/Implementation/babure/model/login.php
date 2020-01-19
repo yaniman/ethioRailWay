@@ -4,18 +4,13 @@ class loginModel
 {
     private $username;
     private $password;
-    public function _construct()
-    {
-        
-       session_start();
-       
-    }
+    
     public function setter()
     {
-        //$username=$_POST('username');
-        //$password=$_POST('password');
-        $this->username="0923273069";
-        $this->password="3069";
+        session_start();
+        $this->username=$_POST['username'];
+        $this->password=$_POST['password'];
+       
     }
     public function loginModule()
     {
@@ -26,17 +21,33 @@ class loginModel
          if($result->num_rows>0)
 {
     $row=$result->fetch_assoc();
-        $_SESSION['username']=$row['username'];
-        header('Location: ../view/homePage.html');   
+    if($row['status']=="active")
+    {
+        $_SESSION["username"]=$row['username'];
+        if($row['privilege']=="staff")
+        {
+            header('Location: ../view/homePage.php');
+        }
+        else{
+            header('Location: ../view/admin/adminHome.php');
+        }
+           
 }
 else
 {
-   echo "no data";
-   header('Location: ../view/loginPage.html');
+      header('Location: ../view/index.php?error=error3');   // try to attach message inside the header function
+ 
 }
+}
+else
+{
+   header('Location: ../view/index.php?error=error1');
+}
+
+
     }
 
 }
-$lm=new loginModel();
+$lm=new loginModel;
 $lm->loginModule();
 ?>

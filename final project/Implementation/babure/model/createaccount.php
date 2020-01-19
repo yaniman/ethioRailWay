@@ -40,7 +40,7 @@ class createaccount
          header('location: ../view/admin/manageaccount.php');
        }
        else{
-           header('location: ../view/admin/adminHome.html');
+         //  header('location: ../view/admin/adminHome.php');
        }
    }
    public function emailsend($email)

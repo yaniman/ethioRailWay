@@ -1,0 +1,1325 @@
+if( window.mMLoaded !== true ){
+
+	function mMReady(fn){var d=document;(d.readyState=='loading')?d.addEventListener('DOMContentLoaded',fn):fn();}
+	mMReady(function(){
+
+			mMloadScript('https://mahimeta.com/networks/tag_config.js?ver=2.2', function() {
+
+				if( typeof inview_elements == 'undefined' )
+					inview_elements = [];	// store in view ad units here
+
+				if( typeof mm_isPageVisible == 'undefined' )
+					mm_isPageVisible = true;
+
+				// find keyword violations in text
+				var text = document.body.innerText;
+				text = text.toLowerCase();
+
+				for (index = 0; index < mMkeyword.length; ++index) {
+
+					// must have space at end and start to avoid matching words like karengay
+					mkey = mMkeyword[index];
+
+					// remove all invalid charatcers
+					cleankey = mkey.replace(/[^0-9.,A-Za-z_\-\@]/g, "");
+
+					if( cleankey != '' ){
+
+						var pattern = new RegExp("(<=\\s|\\b)"+ cleankey +"(?=[]\\b|\\s|$)");
+
+						if( pattern.test(text) ){
+
+							//  keyword found
+							console.log('violation detected');
+							console.log('Keyword: '+cleankey);
+
+							mm_keyword_violation = true;
+							mm_blocked_keyword = cleankey;
+
+							break;
+
+						}
+
+					}
+
+
+				}
+
+				var adsByMahiMeta = document.querySelectorAll('.adsbymahimeta');
+				Array.prototype.forEach.call(adsByMahiMeta, function(elements, index) {
+
+					// only request ad if not fulfilled already
+					if( elements.getAttribute("data-loaded") == null && elements.getAttribute("data-domain") == null  ){
+
+						// add attribute - loaded
+	                    elements.setAttribute("data-loaded","true");
+						elements.setAttribute("data-reloaded","0");
+
+	                    // get placement type
+	                    if( elements.getAttribute("data-placement") != null ){
+
+	                        if( elements.getAttribute("data-placement") != 'in-image' && elements.getAttribute("data-placement") != 'video-overlay' ){
+
+								// check if ad is in article
+								if( elements.getAttribute("data-placement") == 'in-article' ){
+
+									// get delay time
+									if( elements.getAttribute("data-delay") != null && elements.getAttribute("data-delay") != '' ){
+										delay = parseInt(elements.getAttribute("data-delay")) * 1000;
+									}else{
+										delay = 2000;
+									}
+
+									// in article ads must fill full area
+									elements.style.display = "block";	// fill complete area
+									elements.style.background = "#f2f2f2";	// set grey background
+									elements.style.marginTop = "40px";
+									elements.style.marginBottom = "40px";
+									elements.style.textAlign = "center";
+
+									// get the width of element, to get width of parent
+									var positionInfo = elements.getBoundingClientRect();
+									var width = elements.offsetWidth;	// width of parent container
+
+									// decide size of ad based on width
+									if( width > 728 ){
+										ad_size = '728x90';
+									}else if( width > 336 ){
+										ad_size = '336x280';
+									}else{
+										ad_size = '300x250';
+									}
+
+									window.addEventListener('scroll', function(){
+
+										if( inView(elements) ){
+
+											// load ad
+
+											// add attribute to disable loading again
+											if( elements.getAttribute("data-viewed") == null ){
+
+												// wait for ad to come inside view area
+												setTimeout(function(){
+
+													placement = 'inline';
+						                            loadXMLDocDynamic(ad_size,placement,elements);// Calling server for tag
+
+												}, delay);
+
+												// add attr
+												elements.setAttribute("data-viewed","true");
+
+											}
+
+										}else{
+
+										}
+
+									});
+
+								}else{
+
+									placement = elements.dataset.placement;
+		                            loadXMLDocDynamic(elements.dataset.size,placement,elements);// Calling server for tag
+
+									// if ad is in view, store in array
+									if( isElementInViewport(elements) ){
+
+										// check if element exists already
+										if( inview_elements.indexOf(elements.id) === -1 ){
+											// add element
+											inview_elements.push(elements.id);
+										}
+
+									}
+
+									// need to check when element comes into view after scroll
+									window.addEventListener('scroll', function(){
+
+										if( isElementInViewport(elements) ){
+
+											// check if element exists already
+											if( inview_elements.indexOf(elements.id) === -1 ){
+  												// add element
+												inview_elements.push(elements.id);
+											}
+
+										}else{
+
+											// remove this element
+											removeA(inview_elements,elements.id);
+
+										}
+
+									});
+
+								}
+
+	                        }else if( elements.getAttribute("data-placement") == 'video-overlay' ){
+
+	                            // check if user wants it to autoplay
+	                            if( elements.getAttribute("data-autoplay") != null ){
+	                                autoplay = elements.dataset.autoplay;
+	                            }else{
+	                                autoplay = "false";
+	                            }
+
+								if( document.readyState == 'complete' ){
+									videoOverlayAd(elements,autoplay);  // insert video wrapper on embeds
+								}else{
+		                            window.addEventListener('load', function() {
+		                                videoOverlayAd(elements,autoplay);  // insert video wrapper on embeds
+		                            });
+								}
+
+	                        }else{
+
+	                            // check how many images user wants to show ad on
+	                            if( elements.getAttribute("data-max") != null ){
+	                                max_images = elements.dataset.max;
+	                            }else{
+	                                max_images = 3;
+	                            }
+
+	                            // check min image dimension user wants to show ad on
+	                            if( elements.getAttribute("data-dimensions") != null ){
+	                                min_dimensions = elements.dataset.dimensions;
+	                            }else{
+	                                min_dimensions = 336;   // default
+	                            }
+
+	                            window.addEventListener('load', function() {
+	                                inlineImgAd(elements,max_images,min_dimensions);  // insert in-image ad
+	                            })
+
+	                        }
+
+	                    }else{
+
+	                        placement = 'inline';
+	                        loadXMLDocDynamic(elements.dataset.size,placement,elements);// Calling server for tag
+
+							// if ad is in view, store in array
+							if( isElementInViewport(elements) ){
+
+								// check if element exists already
+								if( inview_elements.indexOf(elements.id) === -1 ){
+									// add element
+									inview_elements.push(elements.id);
+								}
+
+							}
+
+							// need to check when element comes into view after scroll
+							window.addEventListener('scroll', function(){
+
+								if( isElementInViewport(elements) ){
+
+									// check if element exists already
+									if( inview_elements.indexOf(elements.id) === -1 ){
+										// add element
+										inview_elements.push(elements.id);
+									}
+
+								}else{
+
+									// remove this element
+									removeA(inview_elements,elements.id);
+
+								}
+
+							});
+
+	                    }
+
+					}
+
+	            });
+
+				curr_domain = window.location.hostname;
+				var refresh_exception = mMRefreshExceptions.indexOf(curr_domain);
+
+				if( typeof mm_interval == 'undefined' && refresh_exception === -1 && !isMobileDevice()  ){
+
+					console.log("Starting Timer");
+
+					mm_interval = setInterval(function(){
+
+						// tab must be active, otherwise dont refresh ad
+						if( mm_isPageVisible ){
+
+							// reload all ads which are in view
+							inview_elements.forEach(function(element) {
+
+								// load ad again
+								mm_reload = document.getElementById(element);
+
+								reload_count = parseInt(mm_reload.getAttribute("data-reloaded"));
+
+								// only reload if already loaded before and height and width are not zero
+								if( mm_reload.getAttribute("data-loaded") == "true" && mm_reload.getAttribute("data-ad-inserted") == "true" && reload_count < 5 ){
+
+									console.log("Reloading: "+element);
+
+									reload_count++;
+									mm_reload.setAttribute("data-reloaded",reload_count);
+
+									if( mm_reload.getAttribute("data-placement") !== null ){
+										placement = mm_reload.dataset.placement;
+									}else{
+										placement = 'inline';
+									}
+
+							   		loadXMLDocDynamic(mm_reload.dataset.size,placement,mm_reload);// Calling server for tag
+
+								}
+
+							});
+
+						}
+
+						console.log("Is page visible: "+mm_isPageVisible);
+
+					}, 16000);
+
+				}
+
+			});	// loaded
+
+	});
+
+}else{
+
+	console.log(window.mMLoaded);
+
+}
+
+function isMobileDevice() {
+    return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+}
+
+var mm_hidden, mm_visibilityChange;
+if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+  mm_hidden = "hidden";
+  mm_visibilityChange = "visibilitychange";
+}else if( typeof document.msHidden !== "undefined" ){
+  mm_hidden = "msHidden";
+  mm_visibilityChange = "msvisibilitychange";
+}else if( typeof document.webkitHidden !== "undefined" ){
+  mm_hidden = "webkitHidden";
+  mm_visibilityChange = "webkitvisibilitychange";
+}
+
+document.addEventListener(mm_visibilityChange, handleVisibilityChange, false);
+
+function handleVisibilityChange() {
+
+	if( document[mm_hidden] ){
+		mm_isPageVisible = false;
+	}else{
+		mm_isPageVisible =  true;
+	}
+
+}
+
+function removeA(arr) {
+    var what, a = arguments, L = a.length, ax;
+    while (L > 1 && arr.length) {
+        what = a[--L];
+        while ((ax= arr.indexOf(what)) !== -1) {
+            arr.splice(ax, 1);
+        }
+    }
+    return arr;
+}
+
+// to check if element is completely in view port
+function isElementInViewport(el){
+
+    //special bonus for those using jQuery
+    if (typeof jQuery === "function" && el instanceof jQuery) {
+        el = el[0];
+    }
+
+    var rect = el.getBoundingClientRect();
+
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+    );
+
+}
+
+function inView(element) {
+
+	var elementHeight = element.clientHeight;
+  	var windowHeight = window.innerHeight;
+  	var scrollY = window.scrollY || window.pageYOffset;
+
+  	var scrollPosition = scrollY + windowHeight;
+  	var elementPosition = element.getBoundingClientRect().top + scrollY + elementHeight;
+
+  	if (scrollPosition > elementPosition) {
+    	return true;
+  	}
+
+  	return false;
+
+}
+
+
+function isScrolledIntoView(el) {
+    var rect = el.getBoundingClientRect();
+    var elemTop = rect.top;
+    var elemBottom = rect.bottom;
+
+    // Only completely visible elements return true:
+    var isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
+    // Partially visible elements return true:
+    //isVisible = elemTop < window.innerHeight && elemBottom >= 0;
+    return isVisible;
+}
+
+function mMloadScript(url,callback) {
+  var script = document.createElement( "script" )
+  script.type = "text/javascript";
+  if(script.readyState) {  // only required for IE <9
+    script.onreadystatechange = function() {
+      if ( script.readyState === "loaded" || script.readyState === "complete" ) {
+        script.onreadystatechange = null;
+        callback();
+      }
+    };
+  } else {  //Others
+    script.onload = function() {
+      callback();
+    };
+  }
+  script.src = url;
+  document.getElementsByTagName( "head" )[0].appendChild( script );
+}
+
+function onElementHeightChange(elm, callback){
+    var lastHeight = elm.clientHeight, newHeight;
+    (function run(){
+        newHeight = elm.clientHeight;
+        if( lastHeight != newHeight )
+            callback();
+        lastHeight = newHeight;
+
+        if( elm.onElementHeightChangeTimer )
+            clearTimeout(elm.onElementHeightChangeTimer);
+
+        elm.onElementHeightChangeTimer = setTimeout(run, 700);
+    })();
+}
+
+onElementHeightChange(document.body, function(){
+
+    // get all overlayed elements
+    var overlayed = document.querySelectorAll('[data-overlay]');
+
+    Array.prototype.forEach.call(overlayed, function(el, index) {
+
+        // get elements position again and update wrapper position
+
+        // get offsets
+        m_top = mMgetOffset(el).top;
+        m_left = mMgetOffset(el).left;
+
+        wrapper_id = el.getAttribute("data-mmoverlay");
+
+        console.log(wrapper_id);
+
+        if( document.getElementById(wrapper_id) != null ){   // incase ad has player already and wrapper removed
+
+            console.log(wrapper_id+" exists");
+
+            // update location
+            document.getElementById(wrapper_id).style.top = m_top+"px";
+            document.getElementById(wrapper_id).style.left = m_left+"px";
+
+        }
+
+    });
+
+
+});
+
+function mMgetOffset( el ) {
+
+    /*
+    var _x = 0;
+    var _y = 0;
+    while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+        _x += el.offsetLeft - el.scrollLeft;
+        _y += el.offsetTop - el.scrollTop;
+        el = el.offsetParent;
+    }
+
+    // customize for one site
+    if( document.domain.includes('idiziizle') ){
+        return { top: _y , left: _x };
+    }else{
+        return { top: _y + window.scrollY, left: _x };
+    }
+    */
+
+   var doc  = document,
+   win  = window,
+   body = doc.body,
+
+   // pageXOffset and pageYOffset work everywhere except IE <9.
+   offsetX = win.pageXOffset !== undefined ? win.pageXOffset :
+       (doc.documentElement || body.parentNode || body).scrollLeft,
+   offsetY = win.pageYOffset !== undefined ? win.pageYOffset :
+       (doc.documentElement || body.parentNode || body).scrollTop,
+
+   rect = el.getBoundingClientRect();
+
+   if (el !== body) {
+       var parent = el.parentNode;
+
+       // The element's rect will be affected by the scroll positions of
+       // *all* of its scrollable parents, not just the window, so we have
+       // to walk up the tree and collect every scroll offset. Good times.
+       while (parent !== body && parent !== null) {
+           offsetX += parent.scrollLeft;
+           offsetY += parent.scrollTop;
+           parent   = parent.parentNode;
+       }
+   }
+
+   return {
+       bottom: rect.bottom + offsetY,
+       height: rect.height,
+       left  : rect.left + offsetX,
+       right : rect.right + offsetX,
+       top   : rect.top + offsetY,
+       width : rect.width
+   };
+
+
+}
+
+function inlineImgAd(element,max_images,min_dimensions){
+
+    // get images on page
+    var inlineImages = document.querySelectorAll('img');
+    window.inlineImgCount = 0;
+    Array.prototype.forEach.call(inlineImages, function(el, index) {
+
+        parentA = false;
+
+        // check its parent
+        ep = el.parentNode;
+        if ( ep.tagName && ep.tagName.toLowerCase() == 'a' ) {
+
+            // use parent as element
+            parentA = true;
+
+        }
+
+        // if parent is figure then traverse higher
+        if ( ep.tagName && ep.tagName.toLowerCase() == 'figure' ) {
+
+            ep = ep.parentNode;
+
+            if ( ep.tagName && ep.tagName.toLowerCase() == 'a' ) {
+
+                // use parent as element
+                parentA = true;
+
+            }
+
+        }
+
+       // get screen size for responsive ads
+        var w = window,
+        d = document,
+        e = d.documentElement,
+        g = d.getElementsByTagName('body')[0],
+        x = w.innerWidth || e.clientWidth || g.clientWidth,
+        y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+        screenWidth = x;
+
+        // get width and height of element
+        width = el.offsetWidth;
+        height = el.offsetHeight;
+
+        if( width >= min_dimensions && height >= 150 ){    // must be atleast this size
+
+            window.inlineImgCount++;
+            if( window.inlineImgCount > max_images ){
+                return false;
+            }
+
+            // choose ad size based on screen width and image size
+            ad_size = "320x100";    // default
+            ad_width = 320;
+            ad_height = 100;
+
+            if( screenWidth > 768 ){    // desktop or tablet
+
+                if( width >= 728 && height >= 400  ){
+
+                    ad_size = "728x90";
+                    ad_width = 728;
+                    ad_height = 90;
+
+                }else if( width >= 336 && height >= 400  ){
+
+                    ad_size = "300x250";
+                    ad_width = 300;
+                    ad_height = 250;
+
+                }
+
+            }else{  // mobile
+
+                if( width >= 336 && height >= 400  ){
+
+                    ad_size = "300x250";
+                    ad_width = 300;
+                    ad_height = 250;
+
+                }
+
+            }
+
+            // create wrapper container
+            var wrapper = document.createElement('div');
+            wrapper.setAttribute('style','position:relative;display:inline-block;');
+
+            // insert wrapper before el in the DOM tree
+            if( parentA ){
+
+                ep.parentNode.insertBefore(wrapper, ep);
+
+                // move el into wrapper
+                wrapper.appendChild(ep);
+
+            }else{
+
+                el.parentNode.insertBefore(wrapper, el);
+
+                // move el into wrapper
+                wrapper.appendChild(el);
+
+            }
+
+            // generate random no for id
+            rand = Math.floor(Math.random() * 10000);
+
+            // insert our ad unit now
+            var adElement = document.createElement('ins');
+            adElement.setAttribute("id","inlineImageAd-"+rand);
+            adElement.setAttribute("style","position:absolute;width:"+ad_width+"px;height:"+ad_height+"px;bottom:0;left:50%;margin-left:-"+ad_width/2+"px;");
+            wrapper.appendChild(adElement);
+
+            // insert close button
+            var closeElement = document.createElement('span');
+            from_bottom = ad_height + 10;
+            from_left = ( ad_width / 2 ) - 25;
+            closeElement.setAttribute("style","position:absolute;bottom:"+from_bottom+"px;left:50%;margin-left:"+from_left+"px;background:#000;color:#fff;width:24px;height:24px;line-height:22px;text-align:center;border-radius:50%;font-family:Arial;cursor:pointer;");
+            closeElement.setAttribute("id","close-mmImageAd-"+rand);
+            //closeElement.onclick = mahimetaCloseFloater("inlineImageAd-"+rand);
+            closeElement.setAttribute("onclick","mahimetaCloseInline('"+rand+"')");
+            closeElement.innerHTML = 'x';
+            wrapper.appendChild(closeElement);
+
+            // call ad loading script now
+            loadXMLDocDynamic(ad_size,"inline",adElement);
+
+        }
+
+    });
+
+}
+
+function videoOverlayAd(element,autoplay){
+
+    // find video tags
+    var vidTags = document.querySelectorAll('video');
+    Array.prototype.forEach.call(vidTags, function(el, index) {
+
+        // get screen size for responsive ads
+        var w = window,
+        d = document,
+        e = d.documentElement,
+        g = d.getElementsByTagName('body')[0],
+        x = w.innerWidth || e.clientWidth || g.clientWidth,
+        y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+        screenWidth = x;
+
+        // get width and height of element
+        width = el.offsetWidth;
+        height = el.offsetHeight;
+
+        // get offsets
+        m_top = mMgetOffset(el).top;
+        m_left = mMgetOffset(el).left;
+
+        if( width >= 200 && height >= 200 ){    // must be atleast this size
+
+            window.vidEmbeds++;
+            if( window.vidEmbeds > 5 ){
+                return false;
+            }
+
+             // generate random no for id
+             rand = Math.floor(Math.random() * 10000);
+
+            // create wrapper container
+            var wrapper = document.createElement('div');
+            wrapper.setAttribute('style','position:absolute;top:'+m_top+'px;left:'+m_left+'px;display:inline-block;background:transparent;width:'+width+'px;height:'+height+'px');
+            wrapper.setAttribute("id","wrapper-vidOverlay-"+rand);
+			wrapper.setAttribute("data-autoplay",autoplay);
+
+            document.getElementsByTagName('body')[0].appendChild(wrapper);
+            //el.parentNode.insertBefore(wrapper, el);
+
+            // move el into wrapper
+            //wrapper.appendChild(el);
+
+            // insert our ad unit now
+            var adElement = document.createElement('iframe');
+            adElement.setAttribute("id","vidOverlay-"+rand);
+            adElement.setAttribute("data-autoplay",autoplay);
+            adElement.setAttribute("frameborder","0");
+            adElement.setAttribute("onclick","mMTriggerPlay('"+rand+"')");
+            adElement.setAttribute("allow","accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture");
+            adElement.setAttribute("src","https://mahimeta.com/videoads/?placement=outstream&domain="+document.domain+"&frame_id=vidOverlay-"+rand);
+            adElement.setAttribute("style","position:absolute;width:100%;height:100%;bottom:0;left:0;top:0;right:0;border:0;z-index:999;background:#000;opacity:0.5;");
+            wrapper.appendChild(adElement);
+
+            // insert message
+            var closeElement = document.createElement('span');
+            closeElement.setAttribute("style","opacity:0;position:absolute;top:10px;right:10px;color:#fff;font-size:12px;line-height:22px;text-align:left;font-family:Arial;z-index:1000;cursor:pointer;background:#000;padding:2px 5px;border-radius:4px;");
+            closeElement.setAttribute("id","close-vidOverlay-"+rand);
+            //closeElement.onclick = mahimetaCloseFloater("inlineImageAd-"+rand);
+            closeElement.setAttribute("onclick","mahimetaCloseOverlay('"+rand+"')");
+            //closeElement.innerHTML = '<span style="background:#555;border-radius:50%;width:18px;height:18px;text-align:center;line-height:18px;margin-right:5px;display:inline-block;">x</span> Mahimeta Video Ad';
+            closeElement.innerHTML = 'Mahimeta Video Ad';
+            wrapper.appendChild(closeElement);
+
+            // attach attribute with element
+            el.setAttribute("data-overlay","true");
+            el.setAttribute("data-mmoverlay","wrapper-vidOverlay-"+rand);
+
+
+        }
+
+    });
+
+    // find embed tags for shockwave
+    var embedTags = document.querySelectorAll('embed');
+    Array.prototype.forEach.call(embedTags, function(el, index) {
+
+        // get screen size for responsive ads
+        var w = window,
+        d = document,
+        e = d.documentElement,
+        g = d.getElementsByTagName('body')[0],
+        x = w.innerWidth || e.clientWidth || g.clientWidth,
+        y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+        screenWidth = x;
+
+        // get width and height of element
+        width = el.offsetWidth;
+        height = el.offsetHeight;
+
+        // get offsets
+        m_top = mMgetOffset(el).top;
+        m_left = mMgetOffset(el).left;
+
+        if( width >= 200 && height >= 200 ){    // must be atleast this size
+
+            window.vidEmbeds++;
+            if( window.vidEmbeds > 5 ){
+                return false;
+            }
+
+             // generate random no for id
+             rand = Math.floor(Math.random() * 10000);
+
+            // create wrapper container
+            var wrapper = document.createElement('div');
+            wrapper.setAttribute('style','position:absolute;top:'+m_top+'px;left:'+m_left+'px;display:inline-block;background:transparent;width:'+width+'px;height:'+height+'px');
+            wrapper.setAttribute("id","wrapper-vidOverlay-"+rand);
+			wrapper.setAttribute("data-autoplay",autoplay);
+
+            document.getElementsByTagName('body')[0].appendChild(wrapper);
+            //el.parentNode.insertBefore(wrapper, el);
+
+            // move el into wrapper
+            //wrapper.appendChild(el);
+
+            // insert our ad unit now
+            var adElement = document.createElement('iframe');
+            adElement.setAttribute("id","vidOverlay-"+rand);
+            adElement.setAttribute("data-autoplay",autoplay);
+            adElement.setAttribute("frameborder","0");
+            adElement.setAttribute("onclick","mMTriggerPlay('"+rand+"')");
+            adElement.setAttribute("allow","accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture");
+            adElement.setAttribute("src","https://mahimeta.com/videoads/?placement=outstream&domain="+document.domain+"&frame_id=vidOverlay-"+rand);
+            adElement.setAttribute("style","position:absolute;width:100%;height:100%;bottom:0;left:0;top:0;right:0;border:0;z-index:999;background:#000;opacity:0.5;");
+            wrapper.appendChild(adElement);
+
+            // insert message
+            var closeElement = document.createElement('span');
+            closeElement.setAttribute("style","opacity:0;position:absolute;top:10px;right:10px;color:#fff;font-size:12px;line-height:22px;text-align:left;font-family:Arial;z-index:1000;cursor:pointer;background:#000;padding:2px 5px;border-radius:4px;");
+            closeElement.setAttribute("id","close-vidOverlay-"+rand);
+            //closeElement.onclick = mahimetaCloseFloater("inlineImageAd-"+rand);
+            closeElement.setAttribute("onclick","mahimetaCloseOverlay('"+rand+"')");
+            //closeElement.innerHTML = '<span style="background:#555;border-radius:50%;width:18px;height:18px;text-align:center;line-height:18px;margin-right:5px;display:inline-block;">x</span> Mahimeta Video Ad';
+            closeElement.innerHTML = 'Mahimeta Video Ad';
+            wrapper.appendChild(closeElement);
+
+            // attach attribute with element
+            el.setAttribute("data-overlay","true");
+            el.setAttribute("data-mmoverlay","wrapper-vidOverlay-"+rand);
+
+
+        }
+
+    });
+
+    // get embeds on page
+    var vidEmbeds = document.querySelectorAll('iframe');
+    window.vidEmbeds = 0;
+    Array.prototype.forEach.call(vidEmbeds, function(el, index) {
+
+        //console.log(el);
+
+       // get screen size for responsive ads
+        var w = window,
+        d = document,
+        e = d.documentElement,
+        g = d.getElementsByTagName('body')[0],
+        x = w.innerWidth || e.clientWidth || g.clientWidth,
+        y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+        screenWidth = x;
+
+        // get width and height of element
+        width = el.offsetWidth;
+        height = el.offsetHeight;
+
+        // get offsets
+        m_top = mMgetOffset(el).top;
+        m_left = mMgetOffset(el).left;
+
+        console.log("Top: "+m_top+" Left: "+m_left+" Width: "+width+" Height: "+height);
+
+        if( width >= 200 && height >= 200 ){    // must be atleast this size
+
+            // show only for youtube and dailymotion
+            frame_src = el.src;
+			player_found = false;
+
+			for (index = 0; index < mMplayers.length; ++index) {
+
+				// get curr element
+				mplayer = mMplayers[index];
+
+				if( frame_src.includes(mplayer) ){
+					player_found = true;
+					console.log('found');
+				}
+
+			}
+
+			console.log(mMplayers);
+
+            if( player_found ){
+
+                window.vidEmbeds++;
+                if( window.vidEmbeds > 5 ){
+                    return false;
+                }
+
+                // generate random no for id
+                rand = Math.floor(Math.random() * 10000);
+
+                // create wrapper container
+                var wrapper = document.createElement('div');
+                wrapper.setAttribute('style','position:absolute;top:'+m_top+'px;left:'+m_left+'px;display:inline-block;background:transparent;width:'+width+'px;height:'+height+'px');
+                wrapper.setAttribute("id","wrapper-vidOverlay-"+rand);
+				wrapper.setAttribute("data-autoplay",autoplay);
+
+                //el.parentNode.insertBefore(wrapper, el);
+                document.getElementsByTagName('body')[0].appendChild(wrapper);
+
+                // move el into wrapper
+                //wrapper.appendChild(el);
+
+                // insert our ad unit now
+                var adElement = document.createElement('iframe');
+                adElement.setAttribute("id","vidOverlay-"+rand);
+                adElement.setAttribute("data-autoplay",autoplay);
+                adElement.setAttribute("frameborder","0");
+                adElement.setAttribute("onclick","mMTriggerPlay('"+rand+"')");
+                adElement.setAttribute("allow","accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture");
+                adElement.setAttribute("src","https://mahimeta.com/videoads/?placement=outstream&domain="+document.domain+"&frame_id=vidOverlay-"+rand);
+                adElement.setAttribute("style","position:absolute;width:100%;height:100%;bottom:0;left:0;top:0;right:0;border:0;z-index:999;background:#000;opacity:0.5;");
+                wrapper.appendChild(adElement);
+
+                // insert message
+                var closeElement = document.createElement('span');
+                closeElement.setAttribute("style","opacity:0;position:absolute;top:10px;right:10px;color:#fff;font-size:12px;line-height:22px;text-align:left;font-family:Arial;z-index:1000;cursor:pointer;background:#000;padding:2px 5px;border-radius:4px;");
+                closeElement.setAttribute("id","close-vidOverlay-"+rand);
+                //closeElement.onclick = mahimetaCloseFloater("inlineImageAd-"+rand);
+                closeElement.setAttribute("onclick","mahimetaCloseOverlay('"+rand+"')");
+                //closeElement.innerHTML = '<span style="background:#555;border-radius:50%;width:18px;height:18px;text-align:center;line-height:18px;margin-right:5px;display:inline-block;">x</span> Mahimeta Video Ad';
+                closeElement.innerHTML = 'Mahimeta Video Ad';
+                wrapper.appendChild(closeElement);
+
+                // attach attribute with element
+                el.setAttribute("data-overlay","true");
+                el.setAttribute("data-mmoverlay","wrapper-vidOverlay-"+rand);
+
+            }
+
+        }
+
+    });
+
+}
+
+var eventMethodMahimeta = window.addEventListener
+        ? "addEventListener"
+        : "attachEvent";
+var eventer = window[eventMethodMahimeta];
+var messageEvent = eventMethodMahimeta === "attachEvent"
+    ? "onmessage"
+    : "message";
+eventer(messageEvent, function (e) {
+
+    if( e.data == undefined ){
+        e.data = e.message;
+    }
+
+    if(  Array.isArray(e.data) ){
+
+        console.log(e.data);
+
+        if (e.data[0] === "mM_player_ready"){
+
+            // check if autoplay is enabled
+
+			if( document.getElementById(e.data[1]) ){
+
+	            autoplay = document.getElementById(e.data[1]).getAttribute("data-autoplay");
+	            console.log(autoplay);
+
+	            if( autoplay == 'true' ){
+	                document.getElementById(e.data[1]).contentWindow.postMessage("autoplay_ad", "*");
+	                document.getElementById(e.data[1]).contentWindow.postMessage("show_play_button", "*");
+	            }
+
+			}
+
+        }
+
+        if (e.data[0] === "mM_force_ad_start"){
+
+            document.getElementById(e.data[1]).contentWindow.postMessage("autoplay_ad", "*");
+            //document.getElementById(e.data[1]).contentWindow.postMessage("show_play_button", "*");
+
+        }
+
+        if (e.data[0] === "mM_ad_started"){
+
+            console.log('Ad Started');
+
+            // show play button now
+            //document.getElementById(e.data[1]).contentWindow.postMessage("autoplay_ad", "*");
+            document.getElementById(e.data[1]).style.opacity = "1";
+            document.getElementById("close-"+e.data[1]).style.opacity = "1";
+
+        }
+
+        if (e.data[0] === "mM_close_overlay"){
+
+            // hide ad
+            document.getElementById(e.data[1]).outerHTML = "";
+            document.getElementById("close-"+e.data[1]).outerHTML = "";
+            document.getElementById("wrapper-"+e.data[1]).outerHTML = "";
+
+            console.log('Close');
+
+        }
+
+        if (e.data[0] === "mM_show_banner"){
+
+            // hide iframe and ad text
+			if( document.getElementById(e.data[1]) )
+            	document.getElementById(e.data[1]).outerHTML = "";
+
+			//document.getElementById("close-"+e.data[1]).outerHTML = "";
+
+			if( document.getElementById("close-"+e.data[1]) ){
+            	document.getElementById("close-"+e.data[1]).style.opacity = "0";
+            	document.getElementById("close-"+e.data[1]).innerHTML = 'Close Ad | <span class="count" id="count-'+e.data[1]+'">10</span>';
+			}
+
+            // get id
+            var res = e.data[1].split("-");
+            adunit_id = res[1];
+
+			if( document.getElementById("wrapper-"+e.data[1]) ){
+
+	            wrapper = document.getElementById("wrapper-"+e.data[1]);
+
+	            // insert new ad unit
+	            var bannerElement = document.createElement('div');
+	            bannerElement.setAttribute("style","opacity:0.5;position:absolute;width:100%;height:100%;bottom:0;left:0;top:0;right:0;border:0;z-index:999;background:#000;text-align:center;");
+	            bannerElement.setAttribute("id","banner-"+e.data[1]);
+	            bannerElement.innerHTML = '<ins class="adsbymahimeta" id="mMTag_300x250_'+adunit_id+'_1" data-size="300x250" style="display:inline-block;width:300px;height:250px;position:absolute;top:50%;left:50%;margin-top:-125px;margin-left:-150px;"></ins>';
+	            bannerElement.setAttribute("onclick","mahimetaShowBanner('"+adunit_id+"')");
+	            wrapper.appendChild(bannerElement);
+
+				// check if autoplay is enabled
+	            autoplay = document.getElementById("wrapper-"+e.data[1]).getAttribute("data-autoplay");
+
+				if( autoplay == 'true' ){
+					// load banner and show
+					mahimetaShowBanner(''+adunit_id+'');
+
+				}
+
+			}
+
+        }
+
+    }
+
+});
+
+function createCookie(name,value,minutes) {
+	if (minutes) {
+        var date = new Date();
+        date.setTime(date.getTime()+(minutes*60*1000));
+        var expires = "; expires="+date.toGMTString();
+    }else{
+        var expires = "";
+    }
+    document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+
+function mahimetaCloseInline(id){
+
+     // remove floating unit
+     document.getElementById("close-mmImageAd-"+id).outerHTML = "";
+     document.getElementById("inlineImageAd-"+id).outerHTML = "";
+
+}
+
+function mMTriggerPlay(id){
+    console.log('Trigger');
+}
+
+function mahimetaCloseOverlay(id){
+
+    // remove overlay unit
+    if( document.getElementById("close-vidOverlay-"+id) )
+        document.getElementById("close-vidOverlay-"+id).outerHTML = "";
+
+    if( document.getElementById("vidOverlay-"+id) )
+        document.getElementById("vidOverlay-"+id).outerHTML = "";
+
+    if( document.getElementById("banner-vidOverlay-"+id) )
+        document.getElementById("banner-vidOverlay-"+id).outerHTML = "";
+
+    if( document.getElementById("wrapper-vidOverlay-"+id) )
+        document.getElementById("wrapper-vidOverlay-"+id).outerHTML = "";
+
+    // clear timer
+    clearInterval(mMTimers[id]);
+
+}
+
+var mMTimers = [];
+function mahimetaShowBanner(adunit_id){
+
+    // show wrapper
+    document.getElementById("banner-vidOverlay-"+adunit_id).style.opacity = "1";
+    document.getElementById("close-vidOverlay-"+adunit_id).style.opacity = "1";
+
+    // load ad
+    var MEle = document.getElementById("mMTag_300x250_"+adunit_id+"_1");
+    loadXMLDocDynamic("300x250","inline",MEle);
+
+    // start timer
+    mMTimers[adunit_id] = setInterval(function(){
+
+        curr = document.getElementById("count-vidOverlay-"+adunit_id).innerHTML;
+        count = parseInt(curr);
+
+        count--;
+
+        if( count == 0 ){
+            clearInterval(mMTimers[adunit_id]);
+        }
+
+        document.getElementById("count-vidOverlay-"+adunit_id).innerHTML = ""+count+"";
+
+    },1000);
+
+
+    setTimeout(function(){
+
+        if( document.getElementById("close-vidOverlay-"+adunit_id) )
+            document.getElementById("close-vidOverlay-"+adunit_id).outerHTML = "";
+
+        if( document.getElementById("wrapper-vidOverlay-"+adunit_id) )
+            document.getElementById("wrapper-vidOverlay-"+adunit_id).outerHTML = "";
+
+        if( document.getElementById("banner-vidOverlay-"+adunit_id) )
+            document.getElementById("banner-vidOverlay-"+adunit_id).outerHTML = "";
+
+     }, 10000);
+
+
+}
+
+function mahimetaCloseFloater(id){
+
+    // remove floating unit
+    document.getElementById(""+id).outerHTML = "";
+
+}
+
+function mahimetaCloseInterstitial(id){
+
+    // remove floating unit, only if close button has appeared already
+    if( document.getElementById("mMCounter").innerHTML == "x" ){
+        document.getElementById(""+id).outerHTML = "";  // remove ad
+        document.getElementById("mMOverlay").outerHTML = ""; // remove overlay
+    }
+
+}
+
+function loadXMLDocDynamic(size,placement,ele) {
+
+    var element = ele;
+    var id = element.id;
+
+    // get screen size for responsive ads
+    var w = window,
+		d = document,
+		e = d.documentElement,
+		g = d.getElementsByTagName('body')[0],
+		x = w.innerWidth || e.clientWidth || g.clientWidth,
+		y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+    screenWidth = x;
+
+    // get referrer
+    if( window.mMReferrer == undefined  ){
+
+        var ref_url = document.createElement('a');
+        ref_url.href = document.referrer;
+
+        referrer = ref_url.hostname;
+        window.mMReferrer = referrer;
+        console.log('Referrer: '+referrer);
+
+        ref = '&referrer='+referrer;
+
+    }else{
+        ref = '';
+    }
+
+    // get desktop, tablet, mobile sizes for responsive ad
+    if( ele.dataset.size == 'Responsive' ){
+
+        if( ele.getAttribute("data-desktop") != null && ele.getAttribute("data-tablet") != null && ele.getAttribute("data-mobile") != null ){
+            device_size = '&desktop='+ele.getAttribute("data-desktop")+'&tablet='+ele.getAttribute("data-tablet")+'&mobile='+ele.getAttribute("data-mobile");
+        }else{
+
+			// use default sizes
+			device_size = '&desktop=728x90&tablet=336x280&mobile=300x250';
+
+		}
+
+    }else{
+
+        device_size = '';
+
+    }
+
+    // domain sent
+    //console.log("SENT: "+document.domain);
+
+    if( document.domain == 'tpc.googlesyndication.com' ){
+        domain = window.mMReferrer;
+    }else{
+        domain = document.domain;
+    }
+
+	// check if site is on autoblock
+	user_domain = domain;
+	user_path = window.location.pathname;
+	user_query = window.location.search;
+
+	user_fullpath = user_domain + user_path + user_query;
+
+	var mm_autoblock = false;
+	for (index = 0; index < mMexceptions.length; ++index) {
+
+		if( user_fullpath.indexOf(mMexceptions[index]) !== -1 ){
+			// domain is set on autoblock
+			mm_autoblock = true;
+		}
+
+	}
+
+    var xmlhttp;
+    var params = "domain="+encodeURIComponent(domain)+"&pathname="+encodeURIComponent(window.location.pathname)+"&query="+encodeURIComponent(window.location.search)+"&currentPage="+encodeURIComponent(window.location.href)+"&size="+size+"&placement="+placement+"&adId="+id+"&screenWidth="+screenWidth+"&keywordViolation="+mm_keyword_violation+"&blockedKeyword="+mm_blocked_keyword+"&autoBlock="+mm_autoblock+ref+device_size;
+    if (window.XMLHttpRequest) {
+        xmlhttp = new XMLHttpRequest();
+    } else {
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    xmlhttp.onreadystatechange = function() {
+
+        if ( xmlhttp.readyState == XMLHttpRequest.DONE ) {
+
+            if(xmlhttp.status == 200){
+
+                //console.log(xmlhttp.responseText);
+                element.innerHTML = xmlhttp.responseText;
+				element.setAttribute("data-ad-inserted","true");
+
+                var arr = element.querySelectorAll('script');
+                var scriptSources = [];
+
+                for (var n = 0; n < arr.length; n++) {
+                    if( arr[n].src != ''  ){
+                        scriptSources.push(arr[n].src);
+                    }
+                }
+
+                for (var n = 0; n < arr.length; n++) {
+                    if (arr[n].src == '') {
+                        var newScript = document.createElement("script");
+                        var inlineScript = document.createTextNode(arr[n].innerHTML);
+                        newScript.appendChild(inlineScript);
+                        element.appendChild(newScript);
+                    }
+
+                }
+
+                if(scriptSources.length) {
+                    eboundLoadScripts(scriptSources, function () {
+
+
+                    });
+                }
+
+
+            }else if(xmlhttp.status == 400) {
+                console.log('400');
+            }else {
+                console.log('other code:'.xmlhttp.status);
+            }
+        }
+    };
+
+    xmlhttp.open("POST", "//adserve.mahimeta.com/networks/?"+params, true);
+    //xmlhttp.setRequestHeader("Content-type", "application/json");
+    xmlhttp.timeout = 8000;
+    xmlhttp.ontimeout = function () {
+
+        console.log('timeout... retrying...');
+        setTimeout(function(){ loadXMLDocDynamic(size,placement,ele); }, 3000);
+
+    }
+    var reporting = prepareAnalytics();
+
+    xmlhttp.send(JSON.stringify({reporting:reporting}));
+}
+
+
+function prepareAnalytics() {
+    var text = document.body.innerText;
+    var reportItems = {};
+
+    //5- Get Operating System Platform
+    var os = navigator.platform;
+    reportItems['platform'] = os;
+
+    //6- Get Referrer url
+    var referrer =  document.referrer;
+    reportItems['referrer'] = referrer;
+
+    //7- Get Iframe
+    reportItems['iframe'] = 0;
+    if(inIframe()){
+        reportItems['iframe'] = 1;
+    }
+
+    //7- Get Domain name
+    reportItems['domain'] = document.domain;
+
+    //8- Path Name
+    reportItems['pathname'] = window.location.pathname;
+
+    //8- Get Current Page
+    reportItems['currentPage'] = window.location.href;
+
+    // Send full page for keyword detection
+    reportItems['text'] = text;
+
+    return reportItems;
+}
+
+function inIframe () {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
+
+
+function eboundLoadScripts(array,callback){
+    var loader = function(src,handler){
+        var script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        script.onload = script.onreadystatechange = function(){
+            script.onreadystatechange = script.onload = null;
+            handler();
+        }
+        var head = document.getElementsByTagName("head")[0];
+        (head || document.body).appendChild( script );
+    };
+    (function run(){
+        if(array.length!=0){
+            loader(array.shift(), run);
+        }else{
+            callback && callback();
+        }
+    })();
+}

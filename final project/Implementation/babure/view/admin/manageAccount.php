@@ -1,4 +1,10 @@
-
+<?php
+session_start();
+if($_SESSION["username"]=="")
+{
+    header("location:../index.php?error=error2");
+}
+?>
 <!DOCTYPE >
 <html>
   <head>
@@ -39,14 +45,13 @@
           <a class="nav-link" href="displayReport.php">View report</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Logout</a>
+          <a class="nav-link" href="../index.php">Logout</a>
         </li>
       </ul>
     </nav>
     <div class="container-fluid">
         <div align="right">
         <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#staffModal" >Add</button>
-        
 </div>
         <div class="table-responsive">
       <table id="staff_data" class="table table-bordered table-striped">
@@ -68,16 +73,13 @@
     </div>
     
 
-    <div class="card-footer">
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab repellat
-        atque a, reiciendis officia ea accusantium dolorem nulla alias fugit
-        voluptatem rerum expedita amet sequi minima! Nobis voluptatum quibusdam
-        dolorem?
-      </p>
-</div>
-  </div>
-</div>
+     <footer class="bg-light py-5">
+      <div class="container">
+        <div class="small text-center text-muted">
+          Copyright &copy; 2019 - Ethiopia Mekelle
+        </div>
+      </div>
+    </footer>
 
   </body>
 </html>
@@ -108,27 +110,67 @@ $(document).ready(function()
     //     $('#staffModal').modal('hide');
     //     dataTable.ajax.reload();
     // });
+
+    //deactivatiom
     $(document).on('click','.deactivate',function()
     { 
-      if(confirm("Do you want to deactivate this account"))
-      {
-        var user_id= $(this).attr.("id");
-      $,ajax({
-        url:"deactivate.php",
+      
+        var user_id= $(this).attr("id");
+      $.ajax({
+        url:"../../model/deactivateAccount.php",
         method:"POST",
         data:{user_id:user_id},
-        dataType:"json",
         success:function(data)
         {
-          alert("account deactivated")
+          alert(data);
+          dataTable.ajax.reload();
         }
-      })
-      }
-      else{
-        dataTable.ajax.reload();
-      }
-      
+      })     
     });
+    // activation
+
+    $(document).on('click','.activate',function()
+    { 
+      
+        var user_id= $(this).attr("id");
+      $.ajax({
+        url:"../../model/activateAccount.php",
+        method:"POST",
+        data:{user_id:user_id},
+        success:function(data)
+        {
+          alert(data);
+          dataTable.ajax.reload();
+        }
+      })     
+    });
+
+    //management  
+
+     $(document).on('click', '.manage', function () {
+      
+    var user_id = $(this).attr("id");
+    $.ajax({
+      url: "../../model/fetchaccount.php",
+      method: "POST",
+      data: { user_id: user_id },
+      dataType: "json",
+      success:function(data) {
+        
+        $('#id').val(user_id);
+        
+        $('#salary').val(data.salary);
+        if(data.role=="")
+        {
+
+        }
+        else{
+        getElementsByTagName('option')[data.role].selected = 'selected';
+        }
+        $('#cv').val(data.cv);
+      }
+    })
+  });
 });
 </script> 
 <div id="staffModal" class="modal fade" role="dialog">
@@ -146,34 +188,96 @@ $(document).ready(function()
           placeholder="First Name"
           class="form-control"
           name="firstname"
+          required
         />
         <input
           type="text"
           placeholder="Last Name"
           class="form-control"
           name="lastname"
+          required
         />
         <input
           type="text"
           placeholder="Email"
           class="form-control"
           name="email"
+          required
         />
         <input
           type="text"
           placeholder="Phone Number"
           class="form-control"
           name="phone"
+          required
         />
         <input
           type="text"
-          placeholder="Privilage"
           class="form-control"
           name="priv"
+          value="staff"
+          disabled
         /> 
             </div> 
                <div class="modal-footer">
                 <input type="submit" id="action" class="btn btn-success" value="Add"/>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Manage modal -->
+
+<div id="manageModal" class="modal fade">
+    <div class="modal-dialog">
+        <form method="POST" id="staff_manage_form" action="../../model/updatestaffinfo.php">
+            <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Manage staff information</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    
+                </div>
+            <div class="modal-body">
+               <input
+          type="text"
+          id="id"
+          class="form-control"
+          name="staff_id"
+          
+        />
+        <lable>salary</lable>
+        <input
+          type="text"
+          id="salary"
+          class="form-control"
+          name="salary"
+          required
+        />
+        <label>Role</label>
+        <select name="role" class="form-control">
+          <option value="counter-manager" selected>counter-manager</option>
+          <option value="checkin-manager">checkin-manager</option>
+        </select>
+        <label>CV</label>
+        <input
+          type="file"
+          id="cv"
+          class="form-control"
+          name="cv"
+        />
+            </div> 
+               <div class="modal-footer">
+                <input type="submit" id="action" class="btn btn-success" value="Edit"/>
                 </div>
             </div>
 

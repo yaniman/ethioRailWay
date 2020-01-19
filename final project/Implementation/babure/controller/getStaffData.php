@@ -15,7 +15,7 @@ class datafetch
        public function searchfetch($parameter)
       {
           $this->setter();
-       $this->query.=" where full_name LIKE '$parameter' or email LIKE '$parameter' or username LIKE '$parameter' or phone_number LIKE '$parameter'";
+       $this->query.=" where full_name LIKE '%$parameter%' or email LIKE '%$parameter%' or username LIKE  '%$parameter%' or phone_number LIKE '%$parameter%'";
        //echo "query is".$query;
       // $result=$this->con->conn->query($query);
     

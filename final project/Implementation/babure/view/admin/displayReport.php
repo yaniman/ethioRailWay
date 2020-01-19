@@ -3,13 +3,25 @@ require "../../controller/reportCon.php";
 include "../../model/report.php";
 $dis=new report;
 ?>
+<?php
+session_start();
+if($_SESSION["username"]=="")
+{
+    header("location:../index.php?error=error2");
+}
+?>
 <!DOCTYPE >
 <html>
   <head>
     <title>
       Admin home
     </title>
-    <link rel="stylesheet" href="../css/bootstrap/bootstrap.css" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="../css/bootstrap/bootstrap.css"
+      type="text/css"
+    />
+    <!-- <link href="../css/bootstrap/creative.min.css" rel="stylesheet" /> -->
   </head>
 
   <body>
@@ -18,39 +30,86 @@ $dis=new report;
     >
       <ul class="navbar-nav ">
         <li class="nav-item">
-          <a class="nav-link" href="createAccount.html">create account</a>
+          <a class="nav-link" href="adminHome.php">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="searchAccount.html">Manage account</a>
+          <a class="nav-link" href="manageAccount.php">Manage account</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">View report</a>
+          <a class="nav-link" href="displayReport.php">View report</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Logout</a>
+          <a class="nav-link" href="../index.php">Logout</a>
         </li>
       </ul>
     </nav>
     <div class="container">
-        <h5>Number of ethiopian citizens that use this automated system to reserve there tickets<?php  echo $dis->userReport()[0];?></h5>
-        <h5>Number of ethiopian citizens that use this automated system to reserve there tickets<?php  echo $dis->userReport()[1];?></h5>
-        <h5>Number of ethiopian citizens that use this long distance train<?php  echo $dis->citizenReport();?></h5>
-        <h5>Number of ethiopian citizens that use this long distance train<?php  echo $dis->noncitizenReport();?></h5>
-        <h4>Number of customers from one departure city to another</h4>
-        <h6>Addis Ababa to adama<?php  echo $dis->arrivalDestinationReport()[0];?></h6>
-        <h6>Addis Ababa to DireDewa<?php  echo $dis->arrivalDestinationReport()[1];?></h6>
-        <h6>Addis Ababa to Djibuti<?php  echo $dis->arrivalDestinationReport()[2];?></h6>
-        <h6>Djibuti to DireDewa<?php  echo $dis->arrivalDestinationReport()[3];?></h6>
-        <h6>Djibuti to adama<?php  echo $dis->arrivalDestinationReport()[4];?></h6>
-        <h6>Djibuti to Addis Ababa<?php  echo $dis->arrivalDestinationReport()[5];?></h6>
+      <table class="table-info table">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>value</th>
+          </tr>
+          <tr>
+            <td>
+              Number of ethiopian citizens that use this automated system to
+              reserve there tickets
+            </td>
+            <td><?php  echo $dis->userReport()[0];?></td>
+          </tr>
+          <tr>
+            <td>
+              Number of non ethiopian citizens that use this automated system to
+              reserve there tickets
+            </td>
+            <td><?php  echo $dis->userReport()[1];?></td>
+          </tr>
+          <tr>
+            <td>
+              Number of ethiopian citizens that use this long distance train
+            </td>
+            <td><?php  echo $dis->citizenReport();?></td>
+          </tr>
+          <tr>
+            <td>
+              Number of non ethiopian citizens that use this long distance train
+            </td>
+            <td><?php  echo $dis->noncitizenReport();?></td>
+          </tr>
+          <tr>
+            <td>Number of customers from Addis Ababa to DireDewa</td>
+            <td><?php  echo $dis->arrivalDestinationReport()[0];?></td>
+          </tr>
+
+          <tr>
+            <td>Number of customers from Addis Ababa to adama</td>
+            <td><?php  echo $dis->arrivalDestinationReport()[1];?></td>
+          </tr>
+          <tr>
+            <td>Number of customers from Addis Ababa to Djibuti</td>
+            <td><?php  echo $dis->arrivalDestinationReport()[2];?></td>
+          </tr>
+          <tr>
+            <td>Number of customers from Djibuti to DireDewa</td>
+            <td><?php  echo $dis->arrivalDestinationReport()[3];?></td>
+          </tr>
+          <tr>
+            <td>Number of customers from Djibuti to adama</td>
+            <td><?php  echo $dis->arrivalDestinationReport()[4];?></td>
+          </tr>
+          <tr>
+            <td>Number of customers from Djibuti to Addis Ababa</td>
+            <td><?php  echo $dis->arrivalDestinationReport()[5];?></td>
+          </tr>
+        </thead>
+      </table>
     </div>
-    <div class="card-footer">
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab repellat
-        atque a, reiciendis officia ea accusantium dolorem nulla alias fugit
-        voluptatem rerum expedita amet sequi minima! Nobis voluptatum quibusdam
-        dolorem?
-      </p>
-    </div>
+    <footer class="bg-light py-5">
+      <div class="container">
+        <div class="small text-center text-muted">
+          Copyright &copy; 2019 - Ethiopia Mekelle
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

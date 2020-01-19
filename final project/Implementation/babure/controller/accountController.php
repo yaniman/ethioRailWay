@@ -16,7 +16,11 @@ class accountcontrol
        //echo "query is".$query;
        $result=$this->con->conn->query($query);
        $current=date('Y-m-d');
-        $query1="insert into staff_report (username,description,date) values('$username','account created','$current')";
+       $query2="select * from staff where username='$username'";
+       $result2=$this->con->conn->query($query2);
+$row=$result2->fetch_assoc();
+$staff_id=$row["staff_id"];
+        $query1="insert into staff_info (staff_id,start_date) values('$staff_id','$current')";
         $result1=$this->con->conn->query($query1);
        if($result1)
        {

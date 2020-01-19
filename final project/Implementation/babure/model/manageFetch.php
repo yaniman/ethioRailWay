@@ -44,8 +44,15 @@ class mainDataManager
            $sub_array[]=$row["username"];
            $sub_array[]=$row["privilege"];
            $sub_array[]=$row["status"];
-            $sub_array[]='<button type="button" name="edit" id="'.$row["staff_id"].'" class="btn btn-warning btn-xs update">edit</button>';
-            $sub_array[]='<button type="button" name="deactivate" id="'.$row["staff_id"].'" class="btn btn-warning btn-xs delete">deactivate</button>';
+            $sub_array[]='<button type="button" name="manage" id="'.$row["staff_id"].'" class="btn btn-warning btn-xs manage" data-toggle="modal" data-target="#manageModal">manage</button>';
+            if($row["status"]=="active")
+            {
+                $sub_array[]='<button type="button" name="deactivate" id="'.$row["staff_id"].'" class="btn btn-warning btn-xs deactivate">deactivate</button>';
+            }
+            else
+            {
+                $sub_array[]='<button type="button" name="deactivate" id="'.$row["staff_id"].'" class="btn btn-warning btn-xs activate">activate</button>';
+            }
             $data[]=$sub_array;
             
         }

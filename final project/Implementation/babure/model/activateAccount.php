@@ -5,7 +5,7 @@ class acAccount
  public $id;
  public function setter()
  {
-     $this->id=$_POST["id"];
+     $this->id=$_POST["user_id"];
  }
  public function activate()
  {
@@ -14,11 +14,11 @@ class acAccount
      $result=$ac->activator($this->id);
      if($result)
      {
-          header('Location: ../view/admin/adminHome.html'); 
+          echo "activation successful"; 
      }
      else
      {
-     header('Location: ../view/admin/searchAccount.html');
+     echo "activation unsuccessful";
      }
  }
 }
