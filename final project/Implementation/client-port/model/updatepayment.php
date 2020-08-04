@@ -8,6 +8,15 @@ class updatepayment
       $this->con=new connection();
        $this->con->connect();   
      }
+     public function getid($tno)
+     {
+       $this->setter();
+        $query="select p_id from reservation where ticket_number='$tno'";
+       //echo "query is".$query;
+       
+       $result=$this->con->conn->query($query);
+       return $result;
+     }
       public function updater($pid,$api,$ticketno)
       {
           $via="mypayAPI";

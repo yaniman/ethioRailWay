@@ -172,7 +172,7 @@
                   <label>Date</label>
                   <input type="date" class="date" id="date" name="date"><br>
                   <br>
-                  <input type="number" name="adult" class="form-group adult"  min=0 placeholder="adults" >
+                  <input type="number" name="adult" class="form-group adult"  min=1 placeholder="adults" >
                   <input type="number" name="child" class="form-group child"  min=0 placeholder="child" >
                   <input type="number" name="infant" class="form-group infant"  min=0 placeholder="infant" ><br>
 
@@ -202,7 +202,7 @@
                           <button type="button" class="btn btn-info btn-sm selectseat" data-toggle="modal" >select</button>
 
                     <br>
-                  <a href="#user_info" class=" btn-lg insertuser" id="btn" data-toggle="tab">Next</a>
+                  <a  class=" btn-lg insertuser" id="btn" data-toggle="tab">Next</a>
                 </form>
               </div>
               <div class="tab-pane fade" id="user_info" role="tabpanel" aria-labelledby="userinfo-tab">
@@ -559,7 +559,7 @@
     var fullname=[], email = [], phoneno = [], age=[], citizenship = [], id = [],route_id ,reservation_id = [],pid="",apiId="";
     price=0;
     var totalp=0;
-    var check;
+    var amountchecker=false;  
     $(document).on("click", ".route", function () {
       destination = document.forms["route"]["destination"].value;
       departure = document.forms["route"]["departure"].value;
@@ -571,6 +571,10 @@
       {
         alert("Destination and departure must differ");
         $('[href="#flight"]').tab('show');
+      }
+      else if(date=="")
+      {
+        alert("please insert date");
       }
       else
       {
@@ -615,10 +619,17 @@
       $("#price").val(price); 
     });
     $(document).on("click", ".insertuser", function () {
+      seat_no[i] = document.forms["seat-select"]["seatno"].value;
+      if(seat_no[i]=="")
+      {
+        alert("seat selection is required");
+      }
+      else{
       $('[href="#user_info"]').tab('show');
-       seat_no[i] = document.forms["seat-select"]["seatno"].value;
+       
       $("#price_c").val(price);
-
+      seat_no[i].value="";
+      }
     });
      $(document).on("change", ".citizenship", function () {
         
@@ -630,8 +641,8 @@
       {
         newprice[i]=price*2;
       }
-      price=newprice[i];
-      $("#price_c").val(newprice);
+     
+      $("#price_c").val(newprice[i]);
 
     });
     $(document).on("change", ".adult", function () {
@@ -684,27 +695,8 @@
 
       }
     });
-    $(document).on("click", ".route", function () {
-      // if(document.forms["route"]["adult"].value=="")
-      // {
-      //   adult=0;
-      //   child = parseInt(document.forms["route"]["child"].value);
-      //   infant = parseInt(document.forms["route"]["infant"].value);
-
-      // }
-      // else
-      //   if (document.forms["route"]["child"].value == "") {
-      //     child = 0;
-      //     adult = parseInt(document.forms["route"]["adult"].value);
-      //      infant = parseInt(document.forms["route"]["infant"].value);
-      //   }
-      //   else if (document.forms["route"]["infant"].value == "") {
-      //     infant = 0;
-      //     adult = parseInt(document.forms["route"]["adult"].value);
-      //     child = parseInt(document.forms["route"]["child"].value);
-      //   }
-      
-      
+    $(document).on("click", ".route", function () { 
+       
        total=adult+child+infant;
        for(var z=0;z<total;z++)
        {
@@ -718,7 +710,7 @@
         data: { destination: destination, departure: departure },
         dataType: "json",
         success: function (data) {
-          route_id=data;
+          route_id=data.route_id;
           ticketno="ETH"+departure.substr(0,3)+destination.substr(0,3)+date.split("-")[2]+""+date.split("-")[1]+""+Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10) + "" + Math.floor(Math.random() * 10);
         }
       })
@@ -747,6 +739,12 @@ else if((departure == "AddisAbaba" && destination == "DireDewa")|| (departure ==
       age[i] = document.forms["userinfo"]["age"].value;
       citizenship[i] = document.forms["userinfo"]["citizenship"].value;
       id[i] = document.forms["userinfo"]["id"].value;
+      if(fullname[i]==""||email[i]==""||phoneno[i]==""||age[i]==""||citizenship[i]=="")
+    {
+      alert("Fields arent filled correctly refill and submit");
+    }
+    else
+    {
       var mydata = {routeid:route_id, date:date, seatclass:seatclass[i], seatno:seat_no[i], fullname:fullname[i], email:email[i], phoneno:phoneno[i], age:age[i], citizenship:citizenship[i], id:id[i], price:newprice[i],ticketno:ticketno,pid:pid};
        var newdata= JSON.stringify(mydata);
 
@@ -763,7 +761,26 @@ else if((departure == "AddisAbaba" && destination == "DireDewa")|| (departure ==
 
         }
        })
-       totalp=totalp+newprice[i];
+       if(adult>=1)
+       {
+         totalp = totalp + newprice[i];
+         adult--;
+         //alert("insert adult information");
+       }else
+       if(child>=1)
+       {
+          totalp = totalp + newprice[i]/2;
+         child--;
+         alert("insert child information");
+       }
+       else if(infant>=1){
+         alert("insert infant information");
+       }
+       else
+       {
+
+       }
+       
        ++i;
        if(i<total)
        {
@@ -780,7 +797,7 @@ else if((departure == "AddisAbaba" && destination == "DireDewa")|| (departure ==
       }
 
        }
-
+      }
      });
      $(document).on("click", ".availableseats", function () {
        var seat_id = $(this).attr("id");
@@ -804,14 +821,9 @@ else if((departure == "AddisAbaba" && destination == "DireDewa")|| (departure ==
           modalbody.removeChild(document.getElementById(i));
         }
       });
-       function success(data)
-       {
-         $('#paymentmodal').modal('hide');
-         $('[href="#page-top"]').tab('show');
-         alert(data);
-       }
+       
       $(document).on("click", ".epay", function () {
-        check=true;
+        
       var full=document.forms["payment"]["fullname"].value;
       var phone = document.forms["payment"]["phoneno"].value;
       var tno = document.forms["payment"]["tno"].value;
@@ -823,52 +835,53 @@ else if((departure == "AddisAbaba" && destination == "DireDewa")|| (departure ==
           data: { fullname: full, phoneno:phone, t_no:tno, total:totalp },
           
           dataType: "json",
+          async: false,
           success: function (data) {
            if(data.error)
            {
-
+            alert("error occured try again later");
            }
            else
            { 
             if(data.amountcheck) 
             {
-              check =true;    
+              amountchecker=true;    
               apiId=data.payment_id;
-              alert(apiId);
-              if (check) {
-                //alert("payment successful " + data.payment_id); 
-                $.ajax({
-                  url: "controller/success.php",
-                  method: "POST",
-                  data: { pid: pid, apipaymentid: apiId, ticketno: ticketno },
-
-                  dataType: "json",
-                  success: success(data)
-                })
-              }
-              else {
-                alert("your reservation is booked you can pay later at city hall. Your reference number is " + ticketno);
-
-              }
+              // alert(amountchecker + " " + ticketno);
+              
             }
             else
             {
-               check=false;
+               amountcheck=false;
             }
-
-            // else
            }
-          //  function
-
           }
         })
-    
+       
+    if (amountchecker) {
+          //alert("payment successful " + data.payment_id); 
+          $.ajax({
+            url: "controller/success.php",
+            method: "POST",
+            data: {  apipaymentid: apiId, ticketno: ticketno },
+            dataType: "json",
+            async: false,
+            success: function (data) {
+              alert();
+              $('#paymentmodal').modal('hide');
+              $('[href="#page-top"]').tab('show');
+                
+            }
+
+          })
+        }
+        else {
+          alert("Insufficient balance your ticket is booked you can pay later at city hall. Your ticket number is " + ticketno);
+
+        }
 
     });
-   $(document).on("click", ".epay", function () {
-    
-     
-   });
+   
     $(document).on("click", ".selectseat", function () {
       $('#seatmodal').modal('show');
        
@@ -945,7 +958,7 @@ else if((departure == "AddisAbaba" && destination == "DireDewa")|| (departure ==
     <form name="payment" >
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Manage staff information</h4>
+          <h4 class="modal-title">Insert payment information</h4>
           <button type="button" class="close seatclose" data-dismiss="modal">&times;</button>
 
         </div>

@@ -1,6 +1,5 @@
 <?php
-include '../model/storecomment.php';
-
+require '../model/storecomment.php';
 class comment
 {
     public $name;
@@ -14,7 +13,7 @@ class comment
         $this->phone=$_POST["phone"];
         $this->comment=$_POST["comment"];
     }
-    public function comment()
+    public function comments()
     {
         $this->setter();
         $st=new storecomment;
@@ -31,14 +30,14 @@ class comment
     }
  public function emailsend($email)
    {
-     
      $to=$email;
      $subject='comment response';
      $message='Thank you for your comment will consider your critic';
-     $headers="From:'$this->name' <'$this->email'>\r\n";
-     
+     $headers="From:'$this->name' <'$this->email'>\r\n";    
      $headers.="Content-type:text/html\r\n";
      mail($to,$subject,$message,$headers);
    }
 }
+$self=new comment();
+$self->comments();
    ?>

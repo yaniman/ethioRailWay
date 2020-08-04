@@ -15,7 +15,7 @@
     public function connect()
      {
          $this->setter();
-        // echo "username pass and host and db are ".connection::$host." ". connection::$user;
+        
      
         if($this->conn->connect_error)
         {
@@ -23,8 +23,10 @@
         } 
         else
         {
-            //echo "connected succesfully";
-            
+        //     $status="booked";
+        //    $value=$this->conn->query("select * from reservation where status='$status'");
+        //    $row=$value->fetch_assoc();
+        //    $date=str
         }
      }
     

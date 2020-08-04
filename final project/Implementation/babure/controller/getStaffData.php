@@ -4,40 +4,26 @@ class datafetch
 {
     public $con;
     public $query="select * from staff";  
-
      public function setter()
      {
       $this->con=new connection();
-       $this->con->connect(); 
-       
+       $this->con->connect();  
      }
-      
        public function searchfetch($parameter)
       {
           $this->setter();
-       $this->query.=" where full_name LIKE '%$parameter%' or email LIKE '%$parameter%' or username LIKE  '%$parameter%' or phone_number LIKE '%$parameter%'";
-       //echo "query is".$query;
-      // $result=$this->con->conn->query($query);
-    
-      // return $result;
+       $this->query.=" where full_name LIKE '%$parameter%' or email LIKE '%$parameter%' or 
+       username LIKE  '%$parameter%' or phone_number LIKE '%$parameter%'";
       }
        public function orderfetch($column,$type)
       {
           $this->setter();
        $this->query.=" order by ".$column." ".$type;
-       //echo "query is".$query;
-       //$result=$this->con->conn->query($query);
-    
-       //return $result;
       }
  public function normalfetch()
       {
           $this->setter();
-       $this->query.=" order by staff_id DESC";
-       //echo "query is".$query;
-       //$result=$this->con->conn->query($query);
-    
-       //return $result;
+       $this->query.=" order by staff_id DESC";      
       }
       public function fetchlength($start,$length)
       {
@@ -48,7 +34,6 @@ class datafetch
       {
           $this->setter();
         $result=$this->con->conn->query($this->query); 
-        $_SESSION["query"]=$this->query;
         return $result; 
       }
       public function fetchall()
@@ -59,5 +44,4 @@ class datafetch
         return $result->num_rows; 
       }
 }
-
 ?>

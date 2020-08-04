@@ -12,6 +12,7 @@ class insertpayment
         $this->fullname=$_POST["fullname"];
         $this->amount=$_POST["amount"];
         $this->transactionno=substr($this->phone,1,8).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9);
+        
     }
     public function insertpayment()
     {

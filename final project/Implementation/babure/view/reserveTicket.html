@@ -1,61 +1,563 @@
-<!doctype>
+<!DOCTYPE >
 <html>
-
-<head>
+  <head>
     <title>
-        Home
+      Home
     </title>
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.css" type="text/css">
-    <link rel="stylesheet" href="css/main.css" type="text/css">
-</head>
+    <link
+      rel="stylesheet"
+      href="bootstrap/css/bootstrap.min.css"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="css/main.css" type="text/css" />
+  </head>
 
-<body>
-    <nav class="navbar navbar-expand-sm bg-light navbar-light justify-content-end">
-        <ul class="navbar-nav ">
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light  py-3" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#">Ethio-Railway</a>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto my-2 my-lg-0">
             <li class="nav-item">
-                <a class="nav-link" href="#">Reserve Ticket</a>
+              <a class="nav-link js-scroll-trigger" href="homePage.php">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Manage Ticket</a>
+              <a class="nav-link js-scroll-trigger" href="manageticket.php"
+                >Manage ticket</a
+              >
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Logout</a>
+              <a class="nav-link js-scroll-trigger" href="reserveticket.html"
+                >Reserve ticket</a
+              >
             </li>
-
-        </ul>
+           
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="index.php">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </nav>
 
-    
-    <form method="POST" action="../model/dddReservation.php" class="form1" >
-        <input type="text" name="test">
-        <label>Departure</label>
+    <div
+      class="container"
+      style="background-color: #e9ecef; border-radius: .20rem; border-radius: 25px ;"
+    >
+      <div class="container mx-auto text-body" style="width: 240px">
+        <h1>Reservation</h1>
+      </div>
 
-        <select  name="departure" class="form-control">
-            <option value="AddisAbaba">Addis Ababa</option>
-            <option value="Adama">Adama</option>
-            <option value="DireDewa">DireDewa</option>
-            <option value="AliSabieh">Ali Sabieh</option>
-            <option value="Djibouti">Djibouti</option>
-        </select>
-        <label>Destination</label>
-            <select  name="destination" class="form-control">
-                <option value="AddisAbaba">AddisAbaba</option>
+      <br />
+      <div class="tab-content" id="myTabContent">
+        <div
+          data-toggle="tab"
+          class="tab-pane fade show active"
+          id="flight"
+          role="tabpanel"
+          aria-labelledby="flight-tab"
+        >
+          <form name="route" class="form-wrap">
+            <p class="bg-danger block-content" id="errorroute"></p>
+
+            <div class="row ">
+              <label>Departure</label>
+
+              <label style="position: absolute;left:680px">Destination</label>
+            </div>
+
+            <div class="row">
+              <select name="departure" class="form-control col-sm-6">
+                <option value="AddisAbaba">Addis Ababa</option>
                 <option value="Adama">Adama</option>
                 <option value="DireDewa">DireDewa</option>
-                <option value="AliSabieh">Ali Sabieh</option>
-                <option value="Djibouti">Djibouti</option>
-            </select>
-        <label>Date</label>
-        <input type="date" class="date" name="date"><br>
-        <input type="submit" class="submit-button" value="next">
-    </form>
+                <option value="Elsabeh">Ali Sabieh</option>
+                <option value="Negad">Djibouti</option>
+              </select>
 
-   
-    <div class="card-footer">
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab repellat atque a, reiciendis officia ea
-            accusantium dolorem nulla alias fugit voluptatem rerum expedita amet sequi minima! Nobis voluptatum
-            quibusdam dolorem?</p>
+              <select name="destination" class="form-control col-sm-6">
+                <option value="AddisAbaba">Addis Ababa</option>
+                <option value="Adama">Adama</option>
+                <option value="DireDewa">DireDewa</option>
+                <option value="Elsabeh">Ali Sabieh</option>
+                <option value="Negad">Djibouti</option>
+              </select>
+            </div>
+            <br />
+            <input
+              type="date"
+              style="width: 48.5%"
+              class="form-control date-picker"
+              name="date"
+              id="date"
+              placeholder="Date "
+            /><br />
+
+            <br />
+
+            <div style="width: 15%" class="mx-auto">
+              <input
+                type="button"
+                class=" btn btn-primary route"
+                id="btn"
+                value="Search Route"
+              />
+            </div>
+          </form>
+          <br /><br />
+        </div>
+      </div>
     </div>
-</body>
+    <br /><br /><br />
+    <div
+      class="container"
+      style="background-color: #e9ecef; border-radius: .20rem; border-radius: 25px ;"
+    >
+      <div class="container mx-auto text-body" style="width: 350px">
+        <h1>Seat Information</h1>
+      </div>
 
+      <br />
+      <div class="tab-content" id="myTabContent">
+        <div
+          data-toggle="tab"
+          class="tab-pane fade show active"
+          id="seat"
+          role="tabpanel"
+          aria-labelledby="flight-tab"
+        >
+          <form class="form-wrap">
+            <div class="row">
+              <div class="col-sm-6">
+                <select
+                  name="seatclass"
+                  id="seatclass"
+                  class="form-control seatclass"
+                >
+                  <option value="seated">Seated</option>
+                  <option value="hard-sleeper">Hard-sleeper</option>
+                  <option value="soft-sleeper">Soft-sleeper</option>
+                </select>
+              </div>
+              <div class="col-sm-6">
+                <input
+                  type="text"
+                  class="form-control btnseat"
+                  placeholder="Seat Number "
+                />
+              </div>
+            </div>
+            <br />
+            <div style="width: 15%" class="mx-auto d-sm-inline">
+              <input
+                type="button"
+                class="btn btn-primary selectseat"
+                value="select seat"
+              />
+              <input class=" btn btn-primary insertuser" id="btn" value="Search Travel">
+            </div>
+          </form>
+          <br /><br />
+        </div>
+      </div>
+    </div>
+    <br /><br /><br />
+
+    <div
+      class="container"
+      style="background-color: #e9ecef; border-radius: .20rem; border-radius: 25px ;"
+    >
+      <div class="container mx-auto text-body" style="width: 350px">
+        <h1>User Information</h1>
+      </div>
+
+      <br />
+      <div class="tab-content" id="myTabContent">
+        <div
+          data-toggle="tab"
+          class="tab-pane fade show active"
+          id="user"
+          role="tabpanel"
+          aria-labelledby="flight-tab"
+        >
+          <form class="form-wrap" name="userinfo">
+            <div class="row">
+              <div class="col-sm-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Fullname "
+                  name="fullname"
+                />
+              </div>
+              <div class="col-sm-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Email"
+                  name="email"
+                />
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col-sm-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Phone Number "
+                  name="phoneno"
+                />
+              </div>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" placeholder="age" name="age" />
+              </div>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" placeholder="citizenship" name="citizenship" />
+            </div>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" placeholder="passport number" name="passportno" />
+            </div>
+            </div>
+            <br />
+            <div style="width: 15%" class="mx-auto">
+              <input type="button" class=" btn btn-primary finalsubmit" id="btn" value="Search Travel">
+            </div>
+          </form>
+          <br /><br />
+        </div>
+      </div>
+    </div>
+<div class="container-fluid" id="displayticket">
+    <div class="container" id="contain">
+        <div class="jumbotron" style="padding: 2rem 1rem;
+          margin-bottom: 2rem;
+          background-color: #e9ecef;
+          border-radius: .20rem;
+          border-radius: 25px ;">
+            <h1 id="fullname">Full Name</h1>
+
+            <div class="container">
+                <!-- Control the column width, and how they should appear on different devices -->
+                <div class="row" id>
+                    <h4><span class="badge badge-secondary" id="status">Status</span></h4>
+
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-sm-6" style="background-color:#f6f4e6;" id="traveldate">Date</div>
+                    <div class="col-sm-6" style="background-color:#ede59a;" id="phonenumber">Phone Number</div>
+                </div>
+                <br>
+
+                <div class="row">
+                    <div class="col-sm-6" style="background-color:#d3ebd7;" id="ticketnumber">Ticket Number</div>
+                    <div class="col-sm-6" style="background-color:#c5e0ca;" id="seatnumber">Seat Number</div>
+                </div>
+                <br>
+
+
+                <div class="row">
+                    <div class="col-sm-6" style="background-color:#f6f4e6;" id="departurecity">Departure City</div>
+                    <div class="col-sm-6" style="background-color:#ede59a;" id="destinationcity">Destination City</div>
+                </div>
+                <div class="row">
+                    <input type="button" class="btn btn-primary payment" value="pay">
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-light py-5">
+      <div class="container">
+        <div class="small text-center text-muted">
+          Copyright &copy; 2019 - Ethiopia Mekelle
+        </div>
+      </div>
+    </footer>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="bootstrap/jquery/jquery/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="bootstrap/jquery/jquery-easing/jquery.easing.min.js"></script>
+  </body>
 </html>
+
+<!-- Plugin JavaScript -->
+
+<script type="text/javascript" language="javascript">
+  $(document).ready(function() {
+    var destination,
+      departure,
+      date,
+      seat_no,
+      seatclass,
+      price,
+      newprice,
+      ticketno;
+    var fullname,
+      email,
+      phoneno,
+      age,
+      citizenship,
+      id,
+      route_id,
+      reservation_id,
+      pid = "",
+      apiId = "",
+      check1=false,check2=false,check3=false,
+    price = 0;
+    var amountchecker = false;
+    $(document).on("click", ".route", function() {
+      destination = document.forms["route"]["destination"].value;
+      departure = document.forms["route"]["departure"].value;
+      date = document.forms["route"]["date"].value;
+
+      if (destination == departure) {
+        //alert("Destination and departure must differ");
+        document.getElementById("errorroute").innerHTML =
+          "Destination and departure must differ";
+      } else if (date == "") {
+        document.getElementById("errorroute").innerHTML = "Date is required";
+      } else {
+          check1=true;
+        //total = adult + child + infant;
+        //   for (var z = 0; z < total; z++) {
+        //       seatclass[z] = document.getElementById("seatclass").value;
+
+        //   }
+
+        $.ajax({
+          url: "../model/routecheck.php",
+          method: "POST",
+          data: { destination: destination, departure: departure },
+          dataType: "json",
+          async: false,
+          success: function(data) {
+            route_id = data.route_id;
+            ticketno =
+              "ETH" +
+              departure.substr(0, 3) +
+              destination.substr(0, 3) +
+              date.split("-")[2] +
+              "" +
+              date.split("-")[1] +
+              "" +
+              Math.floor(Math.random() * 10) +
+              "" +
+              Math.floor(Math.random() * 10) +
+              "" +
+              Math.floor(Math.random() * 10) +
+              "" +
+              Math.floor(Math.random() * 10);
+            $("#flight").slideUp();
+          }
+        })
+      }
+    });
+
+    $(document).on("click", ".selectseat", function() {
+      $("#seatmodal").modal("show");
+      seatclass = document.getElementById("seatclass").value;
+      
+      var modalbody = document.getElementById("modalbody");
+      $.ajax({
+        url: "../model/seat.php",
+        method: "POST",
+        data: {
+          destination: destination,
+          departure: departure,
+          date: date,
+          seatclass: seatclass
+        },
+        dataType: "json",
+        success: function(data) {
+          for (var i = 0; i < 50; i++) {
+            ++i;
+            var seat = document.createElement("BUTTON");
+            seat.innerHTML = "seat " + i;
+            seat.setAttribute("id", i);
+            seat.setAttribute("class", "seats btn-sm availableseats");
+            --i;
+            for (var j = 0; j < 50; j++) {
+              if (data[j] == i + 1) {
+                seat.style.backgroundColor = "red";
+                seat.setAttribute("class", "seats btn-sm");
+                seat.setAttribute("disabled", "disabled");
+                break;
+              }
+            }
+            modalbody.appendChild(seat);
+          }
+        }
+      })
+    
+    
+    });
+    $(document).on("click", "body", function() {
+      var modalbody = document.getElementById("modalbody");
+      for (var i = 1; i <= 50; i++) {
+        modalbody.removeChild(document.getElementById(i));
+      }
+    });
+    $(document).on("click", ".seatclose", function() {
+      var modalbody = document.getElementById("modalbody");
+      for (var i = 1; i <= 50; i++) {
+        modalbody.removeChild(document.getElementById(i));
+      }
+    });
+    $(document).on("click", ".availableseats", function() {
+      var seat_id = $(this).attr("id");
+      seat_no = seat_id;
+      $(".btnseat").val(seat_id);
+      $("#seatmodal").modal("hide");
+      var modalbody = document.getElementById("modalbody");
+      for (var i = 1; i <= 50; i++) {
+        modalbody.removeChild(document.getElementById(i));
+      }
+    });
+    $(document).on("click", ".insertuser", function () {
+        if(!check1)
+        {
+            alert("fill the above form");
+        }
+        else if(seat_no!="") {
+            check2=true;
+        $("#seat").slideUp();
+        }
+        else{
+            alert("seat must be selected");
+        }
+      });
+    $(document).on("click", ".finalsubmit", function () {
+          
+
+          fullname = document.forms["userinfo"]["fullname"].value;
+          email = document.forms["userinfo"]["email"].value;
+          phoneno = document.forms["userinfo"]["phoneno"].value;
+          age = document.forms["userinfo"]["age"].value;
+          citizenship = document.forms["userinfo"]["citizenship"].value;
+          id = document.forms["userinfo"]["passportno"].value;
+          if(!check2)
+          {
+              alert("Fill the second from");
+          }
+          else if(fullname==""||email==""||phoneno==""||age==""||citizenship=="")
+          {
+            alert("Fill the required fiels");
+          }
+          else
+          {
+
+          
+          price = getprice(departure, destination, seatclass, citizenship);
+          alert(price);
+          var mydata = { routeid: route_id, date: date, seatclass: seatclass, seatno: seat_no, fullname: fullname, email: email, phoneno: phoneno, age: age, citizenship: citizenship, id: id, price: price, ticketno: ticketno, pid: pid };
+          var newdata = JSON.stringify(mydata);
+
+          $.ajax({
+              url: "../model/reserve.php",
+              method: "POST",
+
+              data: { datas: newdata },
+              dataType: "json",
+              success: function (data) {
+                reservation_id=data.reservation_id;
+                pid=data.payment_id;
+               $('#traveldate').text(date);
+                  $('#seatclass').text(seatclass);
+                  $('#seatnumber').text("seat " + seat_no);
+                  $('#status').text("booked");
+                  
+                  $('#ticketnumber').text(ticketno);
+                  $('#departurecity').text(departure);
+                  $('#destinationcity').text(destination);
+                  
+                  $('#fullname').text(fullname);
+                  $('#phonenumber').text(phoneno);
+                    $("#user").slideUp();
+            } 
+            })
+        }
+            });
+
+
+      $(document).on("click", ".payment", function () {
+          $.ajax({
+              url: "../model/staffpay.php",
+              method: "POST",
+              data: { reservation_id:reservation_id,pid:pid },
+              dataType: "json",
+              async: false,
+              success: function (data) {
+                  if(data.result)
+                  {
+                      alert("payment successful");
+                      
+                  }
+                  else
+                  {
+                      alert("payment unsuccesful");
+                  }
+              }
+      })
+    });
+
+
+  });
+  function getprice(departure,destination,seatclass,citizenship)
+  {
+      var price;
+          if (seatclass == "seated") {
+          if ((departure == "AddisAbaba" && (destination == "DireDewa" || destination == "Adama")) || (departure == "DireDewa" && (destination == "AddisAbaba" || destination == "Adama"))) {
+              price = 308;
+          }
+          else if ((departure == "AddisAbaba" && destination == "Djibouti") || (departure == "Djibouti" && (destination == "DireDewa" || destination == "Adama" || destination == "AddisAbaba"))) {
+              price = 503;
+          }
+
+      }
+      else if (seatclass == "hard-sleeper") {
+          if ((departure == "AddisAbaba" && (destination == "DireDewa" || destination == "Adama")) || (departure == "DireDewa" && (destination == "AddisAbaba" || destination == "Adama"))) {
+              price = 616;
+          }
+          else if ((departure == "AddisAbaba" && destination == "Djibouti") || (departure == "Djibouti" && (destination == "DireDewa" || destination == "Adama" || destination == "AddisAbaba"))) {
+              price = 1003;
+          }
+
+      }
+      else if (seatclass == "soft-sleeper") {
+          if ((departure == "AddisAbaba" && (destination == "DireDewa" || destination == "Adama")) || (departure == "DireDewa" && (destination == "AddisAbaba" || destination == "Adama"))) {
+              price = 821;
+          }
+          else if ((departure == "AddisAbaba" && destination == "Djibouti") || (departure == "Djibouti" && (destination == "DireDewa" || destination == "Adama" || destination == "AddisAbaba"))) {
+              price = 1341;
+          }
+
+      }
+      if(citizenship!=price)
+      {
+          price=price*2;
+      }
+      return price;
+  }
+</script>
+
+<div id="seatmodal" class="modal fade">
+  <div class="modal-dialog">
+    <form method="POST" id="">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Manage staff information</h4>
+          <button type="button" class="close seatclose" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body" id="modalbody"></div>
+        <div class="modal-footer">
+          <!-- <input type="submit" id="action" class="btn btn-success" value="Ok" /> -->
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

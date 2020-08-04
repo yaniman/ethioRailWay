@@ -39,6 +39,9 @@ if($_SESSION["username"]=="")
     >
       <ul class="navbar-nav ">
         <li class="nav-item">
+          <a class="nav-link" href="adminHome.php">Manage account</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="manageAccount.php">Manage account</a>
         </li>
         <li class="nav-item">
@@ -216,7 +219,7 @@ $(document).ready(function()
           class="form-control"
           name="priv"
           value="staff"
-          disabled
+          hidden
         /> 
             </div> 
                <div class="modal-footer">

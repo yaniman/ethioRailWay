@@ -21,10 +21,7 @@ class routecheck
          $output;
          $row=$result->fetch_assoc();
          
-            $output=$row["route_id"];
-            
-         
-         
+            $output["route_id"]=$row["route_id"];
           echo json_encode($output);
       }
 

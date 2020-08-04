@@ -68,5 +68,5 @@ class mainDataManager
 }
 $self=new mainDataManager;
 $self->main();
-//header('Location: test.php');
+
 ?>

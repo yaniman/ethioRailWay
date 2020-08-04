@@ -27,7 +27,17 @@ class pay
             $output["error"]=false;
             if($row["amount"]>=$this->amount)
             {
+               
+                //$result=$payment->decrease($row["p_id"],$this->amount);
+                
+                if($result)
+                {
                 $output["amountcheck"]=true;
+                }
+                else
+                {
+                   $output["amountcheck"]=false; 
+                }
             }
             else
             {

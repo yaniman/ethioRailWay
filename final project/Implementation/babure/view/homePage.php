@@ -23,7 +23,7 @@ if($_SESSION["username"]=="")
     <!-- Bootstrap -->
   </head>
 
-  <body id="page-top" style="overflow-x: hidden;">
+  <body>
     <!-- Navigation -->
     <nav
       class="navbar navbar-expand-lg navbar-light fixed-top py-3"
@@ -33,28 +33,19 @@ if($_SESSION["username"]=="")
         <a class="navbar-brand js-scroll-trigger" href="#page-top"
           >Ethio-Railway</a
         >
-        <button
-          class="navbar-toggler navbar-toggler-right"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarResponsive"
-          aria-controls="navbarResponsive"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto my-2 my-lg-0">
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="">Home</a>
+              <a class="nav-link js-scroll-trigger" href="homePage.php">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#">Manage Account</a>
+              <a class="nav-link js-scroll-trigger" href="manageticket.php">Manage ticket</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#">View Report</a>
+              <a class="nav-link js-scroll-trigger" href="reserveticket.html">Reserve ticket</a>
             </li>
+            
             <li class="nav-item">
               <a class="nav-link js-scroll-trigger" href="index.php">Logout</a>
             </li>

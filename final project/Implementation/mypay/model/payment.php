@@ -17,5 +17,11 @@ class payment
        //echo $query;
        return $result;
       }
+      public function decrease($pid,$am)
+      {
+        $this->setter();
+        $query="update payment set amount='$am' where p_id='$pid'";
+        $result=$this->con->conn->query($query);
+      }
 }
 ?>

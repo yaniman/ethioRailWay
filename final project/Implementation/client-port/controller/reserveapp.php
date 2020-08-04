@@ -1,0 +1,100 @@
+<?php
+include '../model/managereserve.php';
+
+class reserve
+{
+            private $route_id;
+            private $departure_date;
+            private $seatclass;
+            private $seatno;
+            private $fullname;
+            private $email;
+            private $phoneno;
+            private $age;
+            private $citizenship;
+            private $id;
+            private $ticketno;
+            private $uid;
+            private $current;
+            private $reservor;
+            private $status;
+            private $price;
+            private $pid;
+      public function Setter()
+      {
+           
+           
+            
+               
+            $this->route_id=$_POST['routeid'];
+             $this->departure_date=$_POST['date'];
+             $this->seatclass=$_POST['seatclass'];
+             $this->seatno=$_POST['seatno'];
+             $this->fullname=$_POST['fullname'];
+             $this->email=$_POST['email'];
+             $this->phoneno=$_POST['phoneno'];
+             $this->age=$_POST['age'];
+             $this->citizenship=$_POST['citizenship'];
+             $this->id=$_POST['id'];
+             $this->price=$_POST['price'];      
+             $this->ticketno=$_POST['ticketno'];
+            //$this->pid=$_POST['pid'];
+      }
+      
+    //   public function fetchroute()
+    //   {
+    //       $this->Setter();
+    //       $manage=new managereserve;
+    //      $result= $manage->fetchroute($this->route_id);
+         
+    //      $row=$result->fetch_assoc();
+    //         $departure_city=$row["departure_city"];
+    //         $destination_city=$row["destination_city"];
+    //       $this->ticketno="ETH".substr($departure_city,0,3).substr($destination_city,0,3);
+          
+    //   }
+      public function payment()
+      {
+          $this->Setter();
+          $manage=new managereserve;
+          $result=$manage->payment($this->price);
+          return $result;
+      }
+public function userinfo()
+      {
+         
+         $manage=new managereserve;
+         $result= $manage->user($this->fullname,$this->email,$this->phoneno,$this->age,$this->citizenship,$this->id);
+        //  $row=$result->fetch_assoc();
+        //  $uid=$row["user_id"];
+         return $result;
+      }
+public function reservor()
+        {
+            // $this->fetchroute();
+            $this->Setter();
+                $this->uid=$this->userinfo(); 
+                $this->current=date('Y-m-d');
+                if($this->pid=="")
+                {
+                $this->pid=$this->payment();
+                }
+                
+                $this->reservor="user";
+                $this->status="booked";
+                $manage=new managereserve;
+                //echo $this->route_id." ".$this->uid." ".$this->departure_date." ".$this->current." ".$this->reservor." ".$this->seatclass." ".$this->seatno." ".$this->status." ".$this->ticketno;
+                 $result= $manage->reservation($this->route_id,$this->uid,$this->departure_date,$this->current,$this->reservor,$this->seatclass,$this->seatno,$this->status,$this->pid,$this->ticketno);
+                 
+                //  $row=$result->fetch_assoc();
+                //  $vals=$row["r_id"];
+                $output=array();
+                $output["reservation_id"]=$result;
+                $output["payment_id"]=$this->pid;
+                echo json_encode($output);
+        }
+}
+
+$self=new reserve;
+$self->reservor();
+?>

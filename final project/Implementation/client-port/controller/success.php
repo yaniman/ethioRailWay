@@ -9,15 +9,25 @@ class success
     
     public function setter()
     {
-        $this->pid=$_POST["pid"];
+        //$this->pid=$_POST["pid"];
         $this->apipaymentid=$_POST["apipaymentid"];
         $this->ticketno=$_POST["ticketno"];
        
     }
-    public function success()
+    public function getpaymentid()
     {
         $this->setter();
         $st=new updatepayment;
+        $result=$st->getid($this->ticketno);
+        $row=$result->fetch_assoc();
+        $this->pid=$row["p_id"];
+        
+    }
+    public function successM()
+    {
+        $this->setter();
+        $st=new updatepayment;
+        $this->getpaymentid();
         $result=$st->updater($this->pid,$this->apipaymentid,$this->ticketno);
         // if($result)
         // {
@@ -28,14 +38,18 @@ class success
         // {
         //     echo "Some error occured try again later";
         // } 
+        $output=array();
         if($result)
         {
-            echo json_encode("successful");
+            $output[]="successful";
+           
         }
         else
         {
-            echo json_encode("some error happened try again later");
+            $output[]="some error happened try again later";
+            
         }
+        echo json_encode($output);
     }
  public function emailsend($email)
    {
@@ -50,5 +64,5 @@ class success
    }
 }
 $self=new success;
-$self->success();
+$self->successM();
    ?>
